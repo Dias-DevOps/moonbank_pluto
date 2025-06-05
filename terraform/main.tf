@@ -35,7 +35,7 @@ resource "null_resource" "zip_function_code" {
     triggers = {
         code_hash = sha1(join("", fileset("${path.module}/../cloudfunction", "**")))
     }
-    }
+}
 
 resource "google_project_iam_member" "function_bq_writer" {
     project = var.project_id
@@ -115,7 +115,12 @@ resource "google_cloudfunctions2_function" "function" {
 
     service_config {
       service_account_email = google_service_account.function_sa.email
-    }
+      environment_variables = {
+        BQ_DATASET            = var.bq_dataset
+        BQ_TABLE              = var.bq_table   
+        REQUIRED_LABELS_JSON  = jsonencode(["owner", "cost-center", "environment"])
+      }
+  }
 
     event_trigger {
       trigger_region = var.gcp_region
