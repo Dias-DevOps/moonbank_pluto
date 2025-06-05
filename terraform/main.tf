@@ -62,8 +62,26 @@ resource "google_bigquery_dataset" "dataset" {
 }
 
 resource "google_bigquery_table" "name" {
-    dataset_id = google_bigquery_dataset.dataset.dataset_id
-    table_id = var.bq_table
+  dataset_id = google_bigquery_dataset.dataset.dataset_id
+  table_id   = var.bq_table
+  deletion_protection = false 
+
+  schema = jsonencode([
+    {name = "asset_full_name", type = "STRING", mode = "NULLABLE", description = "Full asset name from Cloud Asset API"},
+    {name = "asset_type", type = "STRING", mode = "NULLABLE"},
+    {name = "vm_name", type = "STRING", mode = "NULLABLE"},
+    {name = "vm_id", type = "STRING", mode = "NULLABLE"},
+    {name = "creation_timestamp", type = "TIMESTAMP", mode = "NULLABLE"},
+    {name = "machine_type", type = "STRING", mode = "NULLABLE"},
+    {name = "zone", type = "STRING", mode = "NULLABLE"},
+    {name = "project_id", type = "STRING", mode = "NULLABLE"},
+    {name = "labels", type = "STRING", mode = "NULLABLE", description = "JSON string of instance labels"},
+    {name = "network_ip", type = "STRING", mode = "NULLABLE", description = "Primary internal IP"},
+    {name = "compliance_status", type = "STRING", mode = "NULLABLE"},
+    {name = "compliance_details", type = "STRING", mode = "NULLABLE"},
+    {name = "ingestion_timestamp", type = "TIMESTAMP", mode = "REQUIRED"},
+    {name = "raw_payload", type = "STRING", mode = "NULLABLE", description = "Raw JSON payload from Pub/Sub"}
+  ])
 }
 
 resource "google_pubsub_topic" "topic" {
