@@ -33,7 +33,9 @@ resource "null_resource" "zip_function_code" {
         EOT
     }
     triggers = {
-        code_hash = sha1(join("", fileset("${path.module}/../cloudfunction", "**")))
+        code_content_hash = sha1(join("", [
+          for f in fileset("${path.module}/../cloudfunction", "**") : filesha1("${path.module}/../cloudfunction/${f}")
+        ]))
     }
 }
 
@@ -55,7 +57,6 @@ resource "google_storage_bucket_object" "object" {
 
     depends_on = [null_resource.zip_function_code]
 }
-
 
 resource "google_bigquery_dataset" "dataset" {
     dataset_id = var.bq_dataset
