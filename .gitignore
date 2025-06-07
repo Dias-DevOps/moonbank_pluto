@@ -9,9 +9,10 @@ function-source.zip
 # Sensative or local-only variable files
 *.tfvars.local
 *.auto.tfvars
+*.tfvars
 
 # Terraform provider plugins and modules
-.terraform/
+.terraform*
 
 # Terraform plan files
 *.tfplan
