@@ -79,8 +79,8 @@ def pubsub_to_bigquery(cloud_event):
 
         asset_payload = json.loads(pubsub_message_str)
 
-        if asset_payload.get("assetType") != "compute.googleapis.com/Instance":
-            print(f"Skipping asset type: {asset_payload.get('assetType')}")
+        if asset_payload["asset"].get("assetType") != "compute.googleapis.com/Instance":
+            print(f"Skipping asset type: {asset_payload["asset"].get('assetType')}")
             return
 
         vm_info = get_vm_details(asset_payload)
@@ -106,7 +106,6 @@ def pubsub_to_bigquery(cloud_event):
 
         client = bigquery.Client()
         table_ref = client.get_table(TABLE_ID)
-
 
         errors = client.insert_rows_json(table_ref, [row_to_insert])
 
