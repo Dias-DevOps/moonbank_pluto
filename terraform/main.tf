@@ -48,6 +48,10 @@ resource "google_project_iam_member" "function_bq_writer" {
 resource "google_storage_bucket" "source-bucket" {
     name = "${var.project_id}-bucket"
     location = "US"
+
+    versioning {
+      enabled = true
+    }
 }
 
 resource "google_storage_bucket_object" "object" {
@@ -110,6 +114,7 @@ resource "google_cloudfunctions2_function" "function" {
         storage_source {
           bucket = google_storage_bucket.source-bucket.name
           object = google_storage_bucket_object.object.name
+          generation = google_storage_bucket_object.object.generation
         }
       } 
     }
